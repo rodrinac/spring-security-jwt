@@ -10,6 +10,7 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import tech.kaomidev.springsecurityjwt.web.dto.AuthRequestDto
 import tech.kaomidev.springsecurityjwt.web.dto.AuthResponseDto
 
 
@@ -30,14 +31,15 @@ class SpringSecurityJwtApplicationTests {
 
 	@Test
 	fun `Should authenticate and allow user access`() {
-		val username = "user"
-		val password = "123"
 
-		val body = """{"username":"$username","password":"$password"}"""
+		val request = AuthRequestDto().apply {
+			username = "user"
+			password = "123"
+		}
 
 		val result = mvc.perform(MockMvcRequestBuilders.post("/auth/login")
 				.contentType(MediaType.APPLICATION_JSON)
-				.content(body))
+				.content(jacksonConverter.objectMapper.writeValueAsString(request)))
 				.andExpect(status().isOk)
 				.andReturn()
 
